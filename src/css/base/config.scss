@@ -1,0 +1,39 @@
+$main-w:1200px;
+$font-c:#333;
+$font-tc:#777;
+$font-hc:#f287a7;
+$font-rc:#e8252d;
+$font-gc:#63a050;
+$header-h:110px;
+$footer-h:130px;
+$nav-h:80px;
+@mixin pos100() {
+  position: absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  right:0;
+  margin:auto;
+}
+@mixin d100() {
+  width: 100%;
+  height:100%;
+  display: block;
+}
+@mixin t_o($num: 1,$height:0){
+  @if ($num == 1) {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  } @else {
+    overflow : hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: $num;
+    -webkit-box-orient: vertical;
+    max-height:$num * $height;
+  }
+}
+@function px2rem($n){
+  @return #{$n/($screen*$font/320)}rem
+}
