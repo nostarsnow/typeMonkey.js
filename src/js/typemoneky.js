@@ -205,7 +205,7 @@ class TypeMoneky {
       top : (opts.height - newRowHeight*(opts.rowIndex+1)) / 2 / scale - newRowHeight*(opts.rowIndex)/2/scale + 'px'
     })
     this.setStyle($blockLast,{
-      [this.transform]:`scale(${scale})`
+      [this.transform]:`translate3d(0,0,0) scale(${scale})`
     })
     $row.appendChild($cols)
     $curBlock.appendChild($row)

@@ -190,8 +190,7 @@
       },
       {
         type : 'text',
-        value : '为什么',
-        color : '#fe131a'
+        value : '为什么'
       },
     ],
     lineHeight:1.17,

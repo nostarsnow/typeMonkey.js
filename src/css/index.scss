@@ -66,26 +66,22 @@ body{
 }
 .tm-block{
   position: absolute;
-  transition: top .15s,transform .15s,left .15s;
+  transition: transform .15s;
   transform: translate3d(0, 0, 0);
 }
 .tm-row{
   display: flex;
   animation: zoomIn .3s;
   transform-origin: left top;
+  text-align: center;
 }
 .tm-col{
 }
 @keyframes zoomIn {
   0% {
-    opacity: 0;
-    -webkit-transform: scale3d(.3, .3, .3);
-    transform: scale3d(.3, .3, .3);
-    visibility: visible;
+    transform: scale(.3);
   }
 
   100% {
-    opacity: 1;
-    visibility: visible;
   }
 }
