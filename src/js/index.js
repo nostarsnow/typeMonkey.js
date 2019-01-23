@@ -5,12 +5,16 @@
     list : [
       {
         type : 'text',
-        value : '开始了。。。'
+        value : '开始。！'
       },
       {
         type : 'text',
-        value : '《水手》 郑智化',
+        value : '水手-郑智化',
         color : '#fe131a'
+      },
+      {
+        type : 'rotate',
+        value : 'lb'
       },
       {
         type : 'text',
@@ -35,8 +39,22 @@
         color : '#fe131a'
       },
       {
+        type : 'rotate',
+        value : 'rb'
+      },
+      {
         type : 'text',
-        value : '骄傲无知的现代人'
+        value : '骄傲',
+        color : '#fe131a'
+      },
+      {
+        type : 'text',
+        value : '无知的',
+        color : '#fe131a'
+      },
+      {
+        type : 'text',
+        value : '现代人'
       },
       {
         type : 'text',
@@ -81,6 +99,10 @@
         value : '自由滴呼吸'
       },
       {
+        type : 'rotate',
+        value : 'rb'
+      },
+      {
         type : 'text',
         value : '耳畔又传来汽笛声'
       },
@@ -99,17 +121,81 @@
       },
       {
         type : 'text',
-        value : '听见水手说。。。'
+        value : '听见水手说'
+      },
+      {
+        type : 'rotate',
+        value : 'rb'
       },
       {
         type : 'text',
-        value : '好了。结束了。。。',
+        value : '他说',
+        color : '#fe131a'
+      },
+      {
+        type : 'text',
+        value : '风雨中'
+      },
+      {
+        type : 'text',
+        value : '这点痛'
+      },
+      {
+        type : 'text',
+        value : '算什么',
+        color : '#fe131a'
+      },
+      {
+        type : 'rotate',
+        value : 'lb'
+      },
+      {
+        type : 'text',
+        value : '擦干泪'
+      },
+      {
+        type : 'text',
+        value : '不要怕'
+      },
+      {
+        type : 'text',
+        value : '至少我们还有'
+      },
+      {
+        type : 'text',
+        value : '梦！！！',
+        color : '#fe131a'
+      },
+      {
+        type : 'rotate',
+        value : 'rb'
+      },
+      {
+        type : 'text',
+        value : '他说 风雨中'
+      },
+      {
+        type : 'text',
+        value : '这点痛 算什么'
+      },
+      {
+        type : 'text',
+        value : '擦干泪',
+        color : '#fe131a'
+      },
+      {
+        type : 'text',
+        value : '不要问',
+        color : '#fe131a'
+      },
+      {
+        type : 'text',
+        value : '为什么',
         color : '#fe131a'
       },
     ],
     lineHeight:1.17,
-    beforeCreate(next,nextIndex){
-      //console.log(nextIndex)
+    beforeCreate(next,nextIndex,nextList){
       next()
     }
   })
@@ -119,6 +205,6 @@
       clearInterval(going)
       return;
     }
-    tm.next()
+    tm.start()
   },1000)
 }())

@@ -17,15 +17,32 @@ class TypeMoneky {
       }
     }
     this.opts = Object.assign(defaultOpts,opts)
-    if ( opts.debug ){
+    if ( this.opts.debug ){
       opts.box.addEventListener('click',v=>{
         this.next()
-      })
+      }).classList.addClass('tm-debug')
     }
     return this
   }
   init(){
     let opts = this.opts
+    let $box = opts.box
+    let prefix = this.getPrefix()
+
+    let $wrap = this.h('div',{
+      class : 'tm-wrap'
+    })
+    let $inner = this.h('div',{
+      class : 'tm-inner',
+      style : {
+        'font-size' : opts.fontSize + 'px',
+        lineHeight : opts.lineHeight,
+        'background':opts.background,
+        color : opts.color
+      }
+    })
+    let $blocks = []
+
     this.opts = Object.assign(opts,{
       width : opts.box.offsetWidth,
       height : opts.box.offsetHeight,
@@ -35,9 +52,29 @@ class TypeMoneky {
           p.l.push([])
         }
         if ( v.type === 'rotate' ){
-          p.r++
-          p.l.push(v)
+          p.l[p.l.length-1].rotate = v.value
           p.l.push([])
+          /*p.r++
+          p.l.push(v)
+          p.l.push([])*/
+
+          /*let to = ''
+          if ( v.value === 'rb' ){
+            to = `right bottom`
+          }else{
+            to = `left bottom`
+          }
+          let $block = this.h('div',{
+            class : `tm-block tm-block-${p.r}`,
+            style : {
+              [`${prefix}transform-origin`]:to
+            }
+          })
+          $block.rotate = v.value
+          if ( $blocks.length > 0 ){
+            $block.appendChild($blocks[$blocks.length-1])
+          }
+          $blocks.push($block)*/
         }else if( v.type === 'text' ){
           p.t++
           p.l[p.l.length-1].push(v)
@@ -50,139 +87,137 @@ class TypeMoneky {
       }),
       index:0,
       blockIndex : 0,
-      rowIndex:0,
+      rowIndex:0
     })
-    this.killIe = (/msie [6|7|8|9]/i.test(navigator.userAgent))
-    this.prefix = this.getPrefix()
-    this.$box = opts.box
-    this.$blocks = []
-    this.start()
-  }
-  start(){
-    let $wrap = this.h('div',{
-      class : 'tm-wrap'
-    })
-    let $inner = this.h('div',{
-      class : 'tm-inner',
-      style : {
-        'font-size' : this.opts.fontSize + 'px',
-        lineHeight : this.opts.lineHeight,
-        'background':this.opts.background,
-        color : this.opts.color
-      }
-    })
-    $wrap.appendChild($inner)
-    this.$box.appendChild($wrap)
-    this.$wrap = $wrap
-    this.$inner = $inner
-    //this.next()
-  }
-  createRow(){
-    let opts = this.opts
-    var { list,total,rowIndex,blockIndex,index } = opts
-    let curList = list[opts.index]
-    let nextTotalIndex = 0
-    if ( curList.type === 'rotate' ){
-      opts.blockIndex++
-      curList = opts.list[++opts.index]
-      nextTotalIndex = blockIndex + 3
-      opts.rowIndex = 1
-      rowIndex = 0
-      opts.index++
-      blockIndex++
-    }else if ( curList.type === 'text' ){
-      opts.rowIndex++
-      opts.index++
-      nextTotalIndex = opts.blockIndex + 1
-    }
-    let $block
-    if ( rowIndex === 0 ){
-      let nextBlock = total.l[nextTotalIndex],
-          to = '',style={}
-      if ( nextBlock && nextBlock.type === 'rotate' ){
-        if ( nextBlock.value === 'rb' ){
-          to = `right bottom`
-          //to = `${opts.lineHeight*100}% bottom`
-        }else{
-          to = `left bottom`
-          //to = `-${opts.lineHeight*100-100}% bottom`
-        }
-        
+    opts.total.l.forEach((v,i)=>{
+      let to = ''
+      if ( v.rotate === 'rb' ){
+        to = `right bottom`
       }else{
         to = `left bottom`
       }
-      style = {
-        [`${this.prefix}transform-origin`]:to
-      }
-      $block = this.h('div',{
-        class : `tm-block tm-block-${blockIndex+1}`,
-        style
+      let $block = this.h('div',{
+        class : `tm-block tm-block-${i+1}`,
+        style : {
+          [`${prefix}transform-origin`]:to
+        }
       })
-      $block.opts = {}
-      if ( nextBlock && nextBlock.type === 'rotate' ){
-        $block.opts.rotate = nextBlock.value
+      $block.rotate = v.rotate
+      if ( $blocks.length > 0 ){
+        $block.appendChild($blocks[$blocks.length-1])
       }
-    }else{
-      $block = this.$blocks[blockIndex]
-    }
-    let style = {}
-    if ( curList.color ){
-      style.color = curList.color
-    }
-    let $row = this.h('div',{
-      class : `tm-row tm-row-${rowIndex+1}`,
-      style
+      $blocks.push($block)
     })
-    let $cols = document.createDocumentFragment()
-    curList.value.split('').forEach((t,i)=>{
-      let $col = this.createCol(t,i,rowIndex)
+    let $blockLast = this.h('div',{
+      class : `tm-block tm-block-last`,
+      style : {
+        [`${prefix}transform-origin`]:'left bottom'
+      }
+    })
+    $blockLast.appendChild($blocks[$blocks.length-1])
+    $blocks.push($blockLast)
+    $inner.appendChild($blocks[$blocks.length-1])
+    $wrap.appendChild($inner)
+    $box.appendChild($wrap)
+    Object.assign(this,{
+      $box,
+      $wrap,
+      $inner,
+      $blocks,
+      $blockLast,
+      prefix,
+      killIe : (/msie [6|7|8|9]/i.test(navigator.userAgent)),
+      transform : prefix + 'transform'
+    })
+  }
+  start(){
+    this.next()
+  }
+  createRow(nextIndex){
+    let opts = this.opts
+    let cur = opts.list[nextIndex]
+    if ( cur.type === 'rotate' ){
+      opts.index++
+      opts.blockIndex++
+      opts.rowIndex = 0
+      this.next()
+      return;
+    }
+    let $curBlock = this.$blocks[opts.blockIndex],
+        $blockLast = this.$blocks[this.$blocks.length-1],
+        $cols = document.createDocumentFragment()
+    cur.value.split('').forEach((t,i)=>{
+      let $col = this.createCol(t,i,opts.rowIndex)
       $cols.appendChild($col)
     })
-    let rowWidth = curList.value.length * opts.fontSize
+    let rowWidth = cur.value.length * opts.fontSize
     let rowHeight = opts.fontSize * opts.lineHeight
     let scale = opts.conWidth / rowWidth
     let newRowWidth = rowWidth * scale
     let newRowHeight = rowHeight * scale
-    let blockStyle = {
-      left : (opts.width - newRowWidth)/2 + 'px',
-      top : (opts.height - rowHeight*(rowIndex+1)) / 2  + ( newRowHeight - rowHeight*(rowIndex+1) )/2  + 'px',
-      [`${this.prefix}transform`] : `scale(${scale})`
-    }
-    this.setStyle($block,blockStyle)
-
-    this.$blocks.slice(0,opts.blockIndex).forEach(v=>{
-      let rotate,opts=v.opts
-      if ( opts.rotate === 'lb' ){
+    let $row = this.h('div',{
+      class : `tm-row tm-row-${opts.rowIndex+1}`,
+      style : {
+        color : cur.color,
+      }
+    })
+    if ( opts.blockIndex > 0 ){
+      let lastArray = opts.total.l[opts.blockIndex-1]
+      let $prevBlock = this.$blocks[opts.blockIndex-1]
+      let curArray = opts.total.l[opts.blockIndex]
+      let rotate,left = 0,originX
+      if ( $prevBlock.rotate === 'lb' ){
         rotate = `-90`
       }
-      if ( opts.rotate === 'rb' ){
+      if ( $prevBlock.rotate === 'rb' ){
         rotate = `90`
+        let lastArrMax = Math.max.apply(null,lastArray.map(v=>v.value.length))
+        let lastArrLastLengh = lastArray[lastArray.length-1].value.length
+        originX = lastArrLastLengh/lastArrMax
+
+        let now = curArray[opts.rowIndex].value.length
+        let max = Math.max.apply(null,curArray.map(v=>v.value.length))
+
+        let prevMaxIndex = curArray.slice(0,opts.rowIndex).findIndex(v=>v.value.length > now)
+
+        if ( opts.rowIndex === 0 ){
+          left = 100 * (now - lastArrLastLengh)/now + '%'
+        }else if ( prevMaxIndex === -1 ){
+          left = 100 * (now - lastArrLastLengh)/now + '%'
+        }else if ( prevMaxIndex >= 0 ){
+          let prevMax = curArray[prevMaxIndex].value.length
+          left = 100 * (prevMax - lastArrLastLengh)/prevMax + '%'
+        }
       }
       let style = {
-        [`${this.prefix}transform`] : `scale(${scale}) rotate(${rotate}deg)`,
+        left,
+        top : -newRowHeight*(lastArray.length-1)/scale + 'px',
+        [this.transform]:`rotate(${rotate}deg)`
       }
-      if ( rowIndex > 0 ){
-        style.top = Number(opts.top.replace('px','')) - newRowHeight*rowIndex + 'px'
+      if ( originX !== undefined ){
+        style[`${this.prefix}transform-origin`] = `${originX*100}% bottom`
       }
-      this.setStyle(v,style)
-    })
-
-    $row.appendChild($cols)
-    $block.appendChild($row)
-    Object.assign($block.opts,{
-      scale,
-      top:blockStyle.top,
-      left:blockStyle.left
-    })
-    if ( rowIndex === 0 ){
-      $block.opts.firstTop = blockStyle.top
-      this.$inner.appendChild($block)
-      this.$blocks.push($block)
+      this.setStyle($prevBlock,style)
     }
+    $curBlock.scale = scale
+    this.setStyle($curBlock,{
+      left : (opts.width - newRowWidth)/2/scale + 'px',
+      top : (opts.height - newRowHeight*(opts.rowIndex+1)) / 2 / scale - newRowHeight*(opts.rowIndex)/2/scale + 'px'
+    })
+    this.setStyle($blockLast,{
+      [this.transform]:`scale(${scale})`
+    })
+    $row.appendChild($cols)
+    $curBlock.appendChild($row)
+    opts.index++
+    opts.rowIndex++
   }
   createCol(t,i,index){
     return this.h('span',{
-      class : `tm-col tm-col-${i+1}`
+      class : `tm-col tm-col-${i+1}`,
+      style : {
+        width : this.opts.fontSize + 'px',
+      }
     },t)
   }
   next(){
@@ -190,17 +225,12 @@ class TypeMoneky {
     if ( opts.index === opts.list.length ){
       this.isEnd = true
     }else{
-      let nextIndex
-      if ( opts.index === 0 ){
-        nextIndex = 0
-      }else{
-        nextIndex = opts.index
-      }
-      this.opts.beforeCreate(this._next.bind(this),nextIndex,this.opts)
+      let nextIndex = opts.index
+      this.opts.beforeCreate(this._next.bind(this,nextIndex),nextIndex,opts.list[nextIndex],opts)
     }
   }
-  _next(){
-    this.createRow()
+  _next(nextIndex){
+    this.createRow(nextIndex)
   }
   h(name,obj,children){
     return this._createElement(name,obj,children)
@@ -209,7 +239,7 @@ class TypeMoneky {
     let el = document.createElement(name)
     Object.keys(obj).forEach(v=>{
       if ( v === 'style' ){
-        el.setAttribute(v,this.getStyleStr(obj[v]))
+        this.setStyle(el,obj[v])
       }else{
         el.setAttribute(v,obj[v])
       }
@@ -225,15 +255,9 @@ class TypeMoneky {
     }).join('')
   }
   setStyle(el,style){
-    let _style = (el.getAttribute('style') || '').split(';').reduce((p,v,i,a)=>{
-      let kv = v.split(':')
-      if ( kv.toString() ){
-        p[kv[0].trim()] = kv[1].trim()
-      }
-      return p
-    },{})
-    let newStyle = Object.assign(_style,style)
-    return el.setAttribute('style' , this.getStyleStr(newStyle))
+    Object.keys(style).forEach(v=>{
+      el.style[this.label2str(v)]=style[v]
+    })
   }
   isType(value,type){
     return Object.prototype.toString.call(value) === `[object ${type}]`
@@ -257,6 +281,14 @@ class TypeMoneky {
       result = str.toLowerCase()
     }
     return result
+  }
+  label2str(str,tag='-'){
+    return str.split(tag).filter(v=>v).map((v,i)=>{
+      if ( i !== 0 ){
+        v = v.substring(0,1).toUpperCase()+v.substring(1)
+      }
+      return v
+    }).join('')
   }
   getPrefix(){
     return (function() {

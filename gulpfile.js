@@ -172,7 +172,7 @@ gulp.task('clean-pro', function() {
     return gulp.src(opts.dir.dist.dir)
             .pipe($.clean());
 });
-gulp.task('build',$.sequence("clean-pro","img-pro","css-pro","js-pro","jslib-pro","html-pro","json-pro","rev"));
+gulp.task('build',$.sequence("clean-pro","img-pro","css-pro","js-pro","jslib-pro","html-pro","json-pro"));
 gulp.task('build-dev',$.sequence("clean","css","jslib","js","img","html","json"));
 //server
 gulp.task('server', () => {
