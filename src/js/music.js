@@ -65,9 +65,6 @@ var tm = new TypeMoneky({
   background: 'transparent',
   beforeCreate(next, nextIndex, opts) {
     next()
-  },
-  afterEnd() {
-    musicStop();
   }
 });
 music.$mp3 = tm.h('audio', {
@@ -88,6 +85,10 @@ function musicGoing() {
   let $mp3 = music.$mp3;
   var currentTime = $mp3.currentTime,
     currentMs = currentTime * 1000;
+  if ( $mp3.currentTime >= $mp3.duration ){
+    musicStop();
+    return false;
+  }
   if ( $mp3.paused ){
     return false;
   }
