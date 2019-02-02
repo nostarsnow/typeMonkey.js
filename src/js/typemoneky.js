@@ -228,6 +228,9 @@ class TypeMoneky {
       this.opts.beforeCreate(this._next.bind(this,nextIndex),nextIndex,opts.list[nextIndex],opts)
     }
   }
+  clear(){
+    this.opts.box.innerHTML = ''
+  }
   _next(nextIndex){
     this.createRow(nextIndex)
   }

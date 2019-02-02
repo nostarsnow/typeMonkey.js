@@ -113,6 +113,7 @@ function musicAction() {
 function musicStop() {
   music.$mp3.stop = true;
   cancelAnimationFrame(music.playing);
+  tm.clear();
   $cover.classList.remove('hide');
 }
 
