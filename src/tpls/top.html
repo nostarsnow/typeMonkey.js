@@ -15,7 +15,8 @@
   <meta property="og:title" content="@@title|typemoneky 抖音 文字">
   <link rel=icon href=https://wx2.sinaimg.cn/mw690/4d227521ly1fcoq8d7jpzj200g00g743.jpg>
   <title>@@if ( context.page !== 'index' && context.page !== 'index-mob' ){@@title|}typemoneky 文字 动画</title>
-  <link rel="stylesheet" href="./css/@@page.css">
+  <link rel="stylesheet" href="@@if ( context.page !== 'index' && context.page !== 'index-mob' ){.}./css/typeMonkey.css">
+  <link rel="stylesheet" href="@@if ( context.page !== 'index' && context.page !== 'index-mob' ){.}./css/@@page.css">
   <script>
     var isIELow = !!window.ActiveXObject;
     if ( isIELow ){
@@ -34,7 +35,6 @@
     if ( isMob ){
       var width = window.innerWidth || window.screen.width;
       width = width > 750 ? 750 : width;
-      //document.getElementById("html").style.fontSize = width/750*100 + 'px'
       document.getElementById("html").classList.add('isMob');
     }
   </script>

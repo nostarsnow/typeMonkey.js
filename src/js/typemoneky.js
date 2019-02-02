@@ -5,7 +5,7 @@ class TypeMoneky {
       box : '',
       list : [],
       fontSize : 16,
-      lineHeight : 1.1,
+      lineHeight : 1.2,
       letterSpacing : 0,
       blockIndex: 0,
       rowIndex : 0,
@@ -14,21 +14,24 @@ class TypeMoneky {
       background:'#000',
       beforeCreate (next,nextIndex,opts) {
         next()
+      },
+      afterEnd (){
+
       }
     }
     this.opts = Object.assign(defaultOpts,opts)
     if ( this.opts.debug ){
       opts.box.addEventListener('click',v=>{
         this.next()
-      }).classList.addClass('tm-debug')
+      })
+      opts.box.classList.add('tm-debug')
     }
     return this
   }
-  init(){
+  init(list){
     let opts = this.opts
     let $box = opts.box
     let prefix = this.getPrefix()
-
     let $wrap = this.h('div',{
       class : 'tm-wrap'
     })
@@ -41,54 +44,52 @@ class TypeMoneky {
         color : opts.color
       }
     })
-    let $blocks = []
-
     this.opts = Object.assign(opts,{
       width : opts.box.offsetWidth,
       height : opts.box.offsetHeight,
       conWidth : opts.box.offsetWidth * this.opts.conPercent,
-      total : opts.list.reduce((p,v,i,a)=>{
-        if ( i === 0 ){
-          p.l.push([])
-        }
-        if ( v.type === 'rotate' ){
-          p.l[p.l.length-1].rotate = v.value
-          p.l.push([])
-          /*p.r++
-          p.l.push(v)
-          p.l.push([])*/
-
-          /*let to = ''
-          if ( v.value === 'rb' ){
-            to = `right bottom`
-          }else{
-            to = `left bottom`
-          }
-          let $block = this.h('div',{
-            class : `tm-block tm-block-${p.r}`,
-            style : {
-              [`${prefix}transform-origin`]:to
-            }
-          })
-          $block.rotate = v.value
-          if ( $blocks.length > 0 ){
-            $block.appendChild($blocks[$blocks.length-1])
-          }
-          $blocks.push($block)*/
-        }else if( v.type === 'text' ){
-          p.t++
-          p.l[p.l.length-1].push(v)
-        }
-        return p
-      },{
-        r : 0,
-        t : 0,
-        l : []
-      }),
       index:0,
       blockIndex : 0,
       rowIndex:0
+    });
+    $box.innerHTML = '';
+    $wrap.appendChild($inner)
+    $box.appendChild($wrap)
+    Object.assign(this,{
+      $box,
+      $wrap,
+      $inner,
+      prefix,
+      killIe : (/msie [6|7|8|9]/i.test(navigator.userAgent)),
+      transform : prefix + 'transform'
     })
+    if ( list ){
+      opts.list = list
+    }
+    if ( opts.list ){
+      this.initList();
+    }
+  }
+  initList(){
+    let opts = this.opts;
+    opts.total = opts.list.reduce((p,v,i,a)=>{
+      if ( i === 0 ){
+        p.l.push([])
+      }
+      if ( v.type === 'rotate' ){
+        p.l[p.l.length-1].rotate = v.value
+        p.l.push([])
+      }else if( v.type === 'text' ){
+        p.t++
+        p.l[p.l.length-1].push(v)
+      }
+      return p
+    },{
+      r : 0,
+      t : 0,
+      l : []
+    });
+    let $blocks = [];
     opts.total.l.forEach((v,i)=>{
       let to = ''
       if ( v.rotate === 'rb' ){
@@ -99,7 +100,7 @@ class TypeMoneky {
       let $block = this.h('div',{
         class : `tm-block tm-block-${i+1}`,
         style : {
-          [`${prefix}transform-origin`]:to
+          [`${this.prefix}transform-origin`]:to
         }
       })
       $block.rotate = v.rotate
@@ -111,27 +112,24 @@ class TypeMoneky {
     let $blockLast = this.h('div',{
       class : `tm-block tm-block-last`,
       style : {
-        [`${prefix}transform-origin`]:'left bottom'
+        [`${this.prefix}transform-origin`]:'left bottom'
       }
     })
     $blockLast.appendChild($blocks[$blocks.length-1])
     $blocks.push($blockLast)
-    $inner.appendChild($blocks[$blocks.length-1])
-    $wrap.appendChild($inner)
-    $box.appendChild($wrap)
-    Object.assign(this,{
-      $box,
-      $wrap,
-      $inner,
-      $blocks,
-      $blockLast,
-      prefix,
-      killIe : (/msie [6|7|8|9]/i.test(navigator.userAgent)),
-      transform : prefix + 'transform'
-    })
+    this.$inner.appendChild($blocks[$blocks.length-1])
+    this.$blocks = $blocks;
+    this.$blockLast = $blockLast;
   }
   start(){
-    this.next()
+    if ( this.opts.list && this.opts.list.length > 0 ){
+      this.next()
+    }else{
+      alert('没有数据！');
+    }
+  }
+  setOptList(list){
+    this.opts.list = list;
   }
   createRow(nextIndex){
     let opts = this.opts
@@ -157,9 +155,9 @@ class TypeMoneky {
     let newRowHeight = rowHeight * scale
     let $row = this.h('div',{
       class : `tm-row tm-row-${opts.rowIndex+1}`,
-      style : {
+      style : Object.assign({
         color : cur.color,
-      }
+      },cur.style)
     })
     if ( opts.blockIndex > 0 ){
       let lastArray = opts.total.l[opts.blockIndex-1]
@@ -202,7 +200,7 @@ class TypeMoneky {
     $curBlock.scale = scale
     this.setStyle($curBlock,{
       left : (opts.width - newRowWidth)/2/scale + 'px',
-      top : (opts.height - newRowHeight*(opts.rowIndex+1)) / 2 / scale - newRowHeight*(opts.rowIndex)/2/scale + 'px'
+      top : ( opts.height - newRowHeight*(opts.rowIndex+1) - newRowHeight*(opts.rowIndex) )/2/scale  + 'px'
     })
     this.setStyle($blockLast,{
       [this.transform]:`translate3d(0,0,0) scale(${scale})`
@@ -224,6 +222,7 @@ class TypeMoneky {
     let opts = this.opts
     if ( opts.index === opts.list.length ){
       this.isEnd = true
+      this.opts.afterEnd.call(this);
     }else{
       let nextIndex = opts.index
       this.opts.beforeCreate(this._next.bind(this,nextIndex),nextIndex,opts.list[nextIndex],opts)
