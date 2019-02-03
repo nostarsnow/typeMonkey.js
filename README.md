@@ -8,7 +8,7 @@
 
 [在线预览：Demo](https://nostarsnow.github.io/typeMonkey.js/dist/) 
 
-[新增图文配乐版](https://nostarsnow.github.io/typeMonkey.js/dist/music/) 
+[新增图文配乐版 - 通过mp3音乐文件和lrc歌词文件](https://nostarsnow.github.io/typeMonkey.js/dist/music/) 
 
 但就是懒得写介绍了。。。 
 
