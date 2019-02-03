@@ -54,9 +54,9 @@ var music = {
     this.$pre.addEventListener('click', e => {
       $cover.classList.add('hide');
       tm.init(list);
-      addWindowListen();
       musicAction();
     }, false)
+    addWindowListen();
     $cover.appendChild(this.$pre);
   }
 }
@@ -106,6 +106,7 @@ function musicGoing() {
 }
 
 function musicAction() {
+  music.$mp3.stop = false;
   music.$mp3.play();
   music.playing = requestAnimationFrame(musicGoing);
 }
@@ -142,10 +143,12 @@ function addWindowListen() {
     state = "webkitVisibilityState";
   }
   document.addEventListener(visibilityChange, function () {
-    if ( document[state] === hidden ){
-      musicPause()
-    }else{
-      musicAction();
+    if ( music.$mp3.stop === false ){
+      if ( document[state] === hidden ){
+        musicPause()
+      }else{
+        musicAction();
+      }
     }
   }, false);
 }
