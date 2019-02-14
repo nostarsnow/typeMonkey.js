@@ -68,7 +68,7 @@ var tm = new TypeMoneky({
   }
 });
 music.$mp3 = document.querySelector('.tm-audio');
-music.$mp3.src = music.src;
+//music.$mp3.src = music.src;
 music.$mp3.playbackRate = getRequest('play') || 1;
 get(music.lrcSrc, data => {
   music.init(lrcFormat(data).lrc)

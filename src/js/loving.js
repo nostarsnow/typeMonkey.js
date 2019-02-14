@@ -6,7 +6,7 @@ var $demo = document.getElementById('demo'),
   $lovs = $bg.querySelector('.lovs');
   requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 var music = {
-  src: '../img/loving/dbb.mp3',
+  src: '../img/loving/dbb-remix.mp3',
   lrcSrc: '../img/loving/dbb.lrc',
   offset: $cover.getBoundingClientRect(),
   imgs: {
@@ -105,7 +105,7 @@ var tm = new TypeMoneky({
   }
 });
 music.$mp3 = document.querySelector('.tm-audio');
-music.$mp3.src = music.src;
+//music.$mp3.src = music.src;
 music.$mp3.playbackRate = getRequest('play') || 1;
 $demo.appendChild(music.$mp3);
 get(music.lrcSrc, data => {
