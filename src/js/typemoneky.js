@@ -20,6 +20,12 @@ class TypeMoneky {
       }
     }
     this.opts = Object.assign(defaultOpts,opts)
+    let prefix = this.getPrefix()
+    Object.assign(this,{
+      prefix,
+      killIe : (/msie [6|7|8|9]/i.test(navigator.userAgent)),
+      transform : prefix + 'transform'
+    })
     if ( this.opts.debug ){
       opts.box.addEventListener('click',v=>{
         this.next()
@@ -31,7 +37,6 @@ class TypeMoneky {
   init(list){
     let opts = this.opts
     let $box = opts.box
-    let prefix = this.getPrefix()
     let $wrap = this.h('div',{
       class : 'tm-wrap'
     })
@@ -59,9 +64,6 @@ class TypeMoneky {
       $box,
       $wrap,
       $inner,
-      prefix,
-      killIe : (/msie [6|7|8|9]/i.test(navigator.userAgent)),
-      transform : prefix + 'transform'
     })
     if ( list ){
       opts.list = list
