@@ -67,16 +67,9 @@ var tm = new TypeMoneky({
     next()
   }
 });
-music.$mp3 = tm.h('audio', {
-  class: 'tm-audio',
-  preload: true,
-  src: music.src,
-  style: {
-    position: 'absolute',
-    visibility: 'hidden'
-  }
-});
-$demo.appendChild(music.$mp3);
+music.$mp3 = document.querySelector('.tm-audio');
+music.$mp3.src = music.src;
+music.$mp3.playbackRate = getRequest('play') || 1;
 get(music.lrcSrc, data => {
   music.init(lrcFormat(data).lrc)
 })
@@ -215,5 +208,20 @@ function lrcFormat(data) {
     data,
     lrc: format
   }
+}
+function getRequest(name) {
+  var url = location.search,
+      theRequest = {}
+  if (url.indexOf("?") != -1) {
+    var str = url.substr(1),
+        strs = str.split("&")
+    for (var i = 0;i < strs.length;i++) {
+      theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1])
+    }
+  }
+  if (name !== undefined) {
+    return theRequest[name]
+  }
+  return theRequest
 }
 //}())

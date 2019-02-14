@@ -104,15 +104,8 @@ var tm = new TypeMoneky({
     next()
   }
 });
-music.$mp3 = tm.h('audio', {
-  class: 'tm-audio',
-  preload: true,
-  src: music.src,
-  style: {
-    position: 'absolute',
-    visibility: 'hidden'
-  }
-});
+music.$mp3 = document.querySelector('.tm-audio');
+music.$mp3.src = music.src;
 music.$mp3.playbackRate = getRequest('play') || 1;
 $demo.appendChild(music.$mp3);
 get(music.lrcSrc, data => {
