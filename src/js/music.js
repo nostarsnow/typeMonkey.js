@@ -61,6 +61,7 @@ var music = {
   }
 }
 var tm = new TypeMoneky({
+  debug: false,
   box: $tm,
   background: 'transparent',
   beforeCreate(next, nextIndex, opts) {

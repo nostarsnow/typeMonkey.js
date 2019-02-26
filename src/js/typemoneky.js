@@ -5,6 +5,7 @@ class TypeMoneky {
       box : '',
       list : [],
       fontSize : 16,
+      minWidthNum : 2,
       lineHeight : 1.2,
       letterSpacing : 0,
       blockIndex: 0,
@@ -150,7 +151,10 @@ class TypeMoneky {
       let $col = this.createCol(t,i,opts.rowIndex)
       $cols.appendChild($col)
     })
-    let rowWidth = cur.value.length * opts.fontSize
+    let rowWidth = this.getTextWidth(cur.value) //cur.value.length * opts.fontSize
+    if ( rowWidth < opts.fontSize * opts.minWidthNum ){
+      rowWidth = opts.fontSize * opts.minWidthNum
+    }
     let rowHeight = opts.fontSize * opts.lineHeight
     let scale = opts.conWidth / rowWidth
     let newRowWidth = rowWidth * scale
@@ -159,6 +163,7 @@ class TypeMoneky {
       class : `tm-row tm-row-${opts.rowIndex+1}`,
       style : Object.assign({
         color : cur.color,
+        height: opts.fontSize * opts.lineHeight + 'px'
       },cur.style)
     })
     if ( opts.blockIndex > 0 ){
@@ -215,9 +220,10 @@ class TypeMoneky {
   createCol(t,i,index){
     return this.h('span',{
       class : `tm-col tm-col-${i+1}`,
-      style : {
-        width : this.opts.fontSize + 'px',
-      }
+      /*style : {
+        //width : this.opts.fontSize + 'px',
+        height: this.opts.fontSize * this.opts.lineHeight + 'px'
+      }*/
     },t)
   }
   next(){
@@ -252,6 +258,15 @@ class TypeMoneky {
       el.innerHTML = children
     }
     return el
+  }
+  getTextWidth(text, fontname = 'microsoft Yahei', fontsize = this.opts.fontSize + 'px'){
+    const t = this.getTextWidth;
+    if( t.c === undefined ){
+      t.c = document.createElement('canvas');
+      t.ctx = t.c.getContext('2d');
+    }
+    t.ctx.font = fontsize + ' ' + fontname;
+    return t.ctx.measureText(text).width;
   }
   getStyleStr(style = {}){
     return Object.keys(style).map(v=>{

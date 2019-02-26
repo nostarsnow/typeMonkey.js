@@ -8,11 +8,16 @@ body{
 #demo{
   text-align: center;
   line-height: 3;
+  h2{
+    line-height: 2;
+  }
   ul{
     padding: 0;
+    line-height: 1.5;
   }
   li{
     list-style: none;
+    margin-bottom: 20px;
   }
   h1{
     color:#f287a7;
