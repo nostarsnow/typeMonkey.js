@@ -155,6 +155,7 @@ class TypeMoneky {
     if ( rowWidth < opts.fontSize * opts.minWidthNum ){
       rowWidth = opts.fontSize * opts.minWidthNum
     }
+    cur.width = rowWidth
     let rowHeight = opts.fontSize * opts.lineHeight
     let scale = opts.conWidth / rowWidth
     let newRowWidth = rowWidth * scale
@@ -176,22 +177,22 @@ class TypeMoneky {
       }
       if ( $prevBlock.rotate === 'rb' ){
         rotate = `90`
-        let lastArrMax = Math.max.apply(null,lastArray.map(v=>v.value.length))
-        let lastArrLastLengh = lastArray[lastArray.length-1].value.length
-        originX = lastArrLastLengh/lastArrMax
+        let lastArrMaxWidth = Math.max.apply(null,lastArray.map(v=>v.width))
+        let lastArrLastWidth = lastArray[lastArray.length-1].width
+        originX = lastArrLastWidth/lastArrMaxWidth
 
-        let now = curArray[opts.rowIndex].value.length
-        let max = Math.max.apply(null,curArray.map(v=>v.value.length))
+        let now = curArray[opts.rowIndex].width
+        let max = Math.max.apply(null,curArray.map(v=>v.width))
 
-        let prevMaxIndex = curArray.slice(0,opts.rowIndex).findIndex(v=>v.value.length > now)
+        let prevMaxIndex = curArray.slice(0,opts.rowIndex).findIndex(v=>v.width > now)
 
         if ( opts.rowIndex === 0 ){
-          left = 100 * (now - lastArrLastLengh)/now + '%'
+          left = 100 * (now - lastArrLastWidth)/now + '%'
         }else if ( prevMaxIndex === -1 ){
-          left = 100 * (now - lastArrLastLengh)/now + '%'
+          left = 100 * (now - lastArrLastWidth)/now + '%'
         }else if ( prevMaxIndex >= 0 ){
-          let prevMax = curArray[prevMaxIndex].value.length
-          left = 100 * (prevMax - lastArrLastLengh)/prevMax + '%'
+          let prevMax = curArray[prevMaxIndex].width
+          left = 100 * (prevMax - lastArrLastWidth)/prevMax + '%'
         }
       }
       let style = {
