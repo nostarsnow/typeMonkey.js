@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "gulp": "./node_modules/.bin/gulp"
+    "gulp": "./node_modules/.bin/gulp",
+    "dev": "gulp",
+    "build": "gulp build"
   },
   "author": "nostar",
   "license": "ISC",

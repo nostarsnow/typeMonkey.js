@@ -1,6 +1,6 @@
 !(function(){
   var tm = new TypeMoneky({
-    debug : false,
+    debug : true,
     box : demo,
     list : [
       {
@@ -199,11 +199,11 @@
     }
   })
   tm.init()
-  let going = setInterval(()=>{
+  /*let going = setInterval(()=>{
     if ( tm.isEnd ){
       clearInterval(going)
       return;
     }
     tm.start()
-  },1000)
+  },1000)*/
 }())
