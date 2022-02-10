@@ -38,7 +38,7 @@
     "gulp-uglify": "^1.5.3",
     "http-proxy-middleware": "^0.17.4",
     "imagemin-pngquant": "^5.0.0",
-    "node-sass": "^4.9.3",
+    "node-sass": "^7.0.0",
     "proxy-middleware": "^0.15.0"
   }
 }
